@@ -3,13 +3,15 @@ require_once "../connect.php";
 
 if($_SERVER['REQUEST_METHOD']=='POST'){
     header('Content-Type: application/json');
-    $nome = trim($_POST['nome']);
-    $email = trim($_POST['email']);
-    $senha = trim($_POST['senha']);
+    $dados = json_decode(file_get_contents('php://input'),true);
+    
+    $nome = trim($dados['nome'] ?? '');
+    $email = trim($dados['email'] ?? '');
+    $senha = trim($dados['senha'] ?? '');
 
     if(!empty($nome)&&!empty($email)&&!empty($senha)){
         if(filter_var($email,FILTER_VALIDATE_EMAIL)){
-            try {
+            try{
                 $sql = 'SELECT * FROM conta WHERE email = :email';
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([':email' => $email]);
@@ -31,7 +33,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                         exit;
                     }
                 }
-            }catch(PDOException $e) {
+            }catch(PDOException $e){
                 echo json_encode(['status'=>'erro','mensagem'=>'Erro ao verificar email do usuario '. $e->getMessage()]);
                 exit;
             }
