@@ -1,10 +1,15 @@
 <?php
 require_once "../connect.php";
-
+session_start();
+if(isset($_SESSION['id_conta'])){
+    echo json_encode(['status'=>'erro','mensagem'=>'Sessão terminada, redirecionando usuario...']);
+    header('Location: ../Perfil/perfil.php');
+    exit;
+}
 if($_SERVER['REQUEST_METHOD']=='POST'){
     header('Content-Type: application/json');
     $dados = json_decode(file_get_contents('php://input'),true);
-    
+
     $nome = trim($dados['nome'] ?? '');
     $email = trim($dados['email'] ?? '');
     $senha = trim($dados['senha'] ?? '');
@@ -26,6 +31,13 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                         $stmt->execute([':nome' => $nome,
                                         ':email'=> $email,
                                         ':senha'=> $senha]);
+
+                        $id_conta = $pdo->lastInsertId();
+                        $_SESSION['id_conta']= $id_conta;
+                        $_SESSION['nome']= $nome;
+                        $_SESSION['email']= $email;
+                        $_SESSION['senha']= $senha;
+
                         echo json_encode(['status'=>'sucesso','mensagem'=>'Usuario cadastrado com sucesso!']);
                         exit;
                     }catch(PDOException $e){
@@ -65,7 +77,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
         <label for="senha">Senha</label>    
         <input name="senha" id="senha" type="password" required>
         <button type="submit">Cadastrar</button>
-        <p>Já possui uma conta? <a href="#">Login</a></p>
+        <p>Já possui uma conta? <a href="../Perfil/login.php">Login</a></p>
         </form>
     </div>
 </body>
