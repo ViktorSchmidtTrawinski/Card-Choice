@@ -12,11 +12,11 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     if(!empty($email)&&!empty($senha)){
         if(filter_var($email,FILTER_VALIDATE_EMAIL)){
             try{
-                $sql = 'SELECT id_conta,nome,email,senha FROM conta WHERE email = :email';
+                $sql = 'SELECT id_conta,nome,email,senha,tipo,data_criacao FROM conta WHERE email = :email';
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([':email' => $email]);
                 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-                if($stmt->rowCount()<0){
+                if($stmt->rowCount()==0){
                     echo json_encode(['status'=>'erro','mensagem'=>'email ou senha incorretos']);
                     exit;
                 }else{
@@ -24,7 +24,9 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                         $_SESSION['id_conta'] = $usuario['id_conta'];
                         $_SESSION['nome'] = $usuario['nome'];
                         $_SESSION['email'] = $usuario['email'];
-                        $_SESSION['senha'] = $usuario['senha'];
+                        $_SESSION['tipo'] = $usuario['tipo'];
+                        $_SESSION['data_criacao'] = $usuario['data_criacao'];
+
                         echo json_encode(['status'=>'sucesso','mensagem'=>'Usuario logado com sucesso']);
                         exit;
                     }else{

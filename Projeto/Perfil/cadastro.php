@@ -2,8 +2,8 @@
 require_once "../connect.php";
 session_start();
 if(isset($_SESSION['id_conta'])){
-    echo json_encode(['status'=>'erro','mensagem'=>'Sessão terminada, redirecionando usuario...']);
     header('Location: ../Perfil/perfil.php');
+    echo json_encode(['status'=>'erro','mensagem'=>'Sessão terminada, redirecionando usuario...']);
     exit;
 }
 if($_SERVER['REQUEST_METHOD']=='POST'){
@@ -17,9 +17,10 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     if(!empty($nome)&&!empty($email)&&!empty($senha)){
         if(filter_var($email,FILTER_VALIDATE_EMAIL)){
             try{
-                $sql = 'SELECT * FROM conta WHERE email = :email';
+                $sql = 'SELECT id_conta,nome,email,senha,tipo,data_criacao FROM conta WHERE email = :email';
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([':email' => $email]);
+                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
                 if($stmt->rowCount()>0){
                     echo json_encode(['status'=>'erro','mensagem'=>'conta já cadastrada']);
                     exit;
@@ -36,7 +37,9 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                         $_SESSION['id_conta']= $id_conta;
                         $_SESSION['nome']= $nome;
                         $_SESSION['email']= $email;
-                        $_SESSION['senha']= $senha;
+                        $_SESSION['tipo'] = $usuario['tipo'];
+                        $_SESSION['data_criacao'] = $usuario['data_criacao'];
+
 
                         echo json_encode(['status'=>'sucesso','mensagem'=>'Usuario cadastrado com sucesso!']);
                         exit;
