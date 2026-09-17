@@ -22,7 +22,7 @@ if(isset($_GET['action'])&& $_GET['action']=='listar'){
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +33,7 @@ if(isset($_GET['action'])&& $_GET['action']=='listar'){
 <body>
     <header><?php include '../nav.php'?></header>
     <h2>Usuarios cadastrados:<h2>
-    <div class="container-usuarios"></div>
+    <div class="lista-usuarios"></div>
     
 </body>
 </html>

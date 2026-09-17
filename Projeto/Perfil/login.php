@@ -1,8 +1,8 @@
 <?php
 require_once "../connect.php";
+session_start();
 
 if($_SERVER['REQUEST_METHOD']=='POST'){
-    session_start();
     header('Content-Type: application/json');
     $dados = json_decode(file_get_contents('php://input'),true);
     
@@ -31,6 +31,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                         exit;
                     }else{
                         echo json_encode(['status'=>'erro','mensagem'=>'Usuario não encontrado']);
+                        exit;
                     }
                 }
             }catch(PDOException $e){
@@ -41,6 +42,8 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
             echo json_encode(['status'=>'erro','mensagem'=>'Email invalido']);
             exit;
         }
+    }else{
+        echo json_encode(['status'=>'erro','mensagem'=>'campos vazios']);
     }
 }
 ?>
@@ -56,13 +59,13 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 </head>
 <body>
     <header><?php include '../nav.php'?></header>
-    <div class="container-login">
-        <form id="form-login" method="POST">
+    <div class="form-area">
+        <form id="form-box" class="form-box" method="POST">
         <label for="email">Email</label>    
         <input name="email" id="email" type="email" required>
         <label for="senha">Senha</label>    
         <input name="senha" id="senha" type="password" required>
-        <button type="submit">Login</button>
+        <button type="submit" class="btn btn-editar">Login</button><br>
         <p>Ainda não possui uma conta? <a href="../Perfil/cadastro.php">Cadastrar</a></p>
         </form>
     </div>

@@ -1,4 +1,4 @@
-const formCadastro = document.getElementById('form-cadastro');
+const formCadastro = document.getElementById('form-box')
 
 formCadastro.addEventListener('submit',async (event)=>{
     event.preventDefault();

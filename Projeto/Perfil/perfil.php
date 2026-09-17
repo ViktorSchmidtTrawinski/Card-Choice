@@ -53,8 +53,8 @@ if(!isset($_SESSION['id_conta'])){
     <main>
         <h3>Olá! <?php echo $_SESSION['nome']?></h1>
         <h3>Informações da conta</h3>
-        <button id="btn editar" type="submit">Editar conta</button>
-        <div class="modal" role="dialog"></div>
+        <button id="btn editar" class="btn btn-editar" type="submit">Editar conta</button>
+        
     </main>
 </body>
 </html>
