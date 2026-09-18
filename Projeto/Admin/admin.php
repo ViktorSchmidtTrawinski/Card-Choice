@@ -2,6 +2,12 @@
 require_once '../connect.php';
 session_start();
 
+if(!isset($_SESSION['tipo']) || $_SESSION['tipo']!=='Admin'){
+    header('Content-Type: application/json');
+    echo json_encode(['status'=>'erro','mensagem'=>'Acesso negado']);
+    exit;
+}
+
 if(isset($_GET['action'])&& $_GET['action']=='listar'){
     header('Content-Type: application/json');
     
@@ -14,6 +20,36 @@ if(isset($_GET['action'])&& $_GET['action']=='listar'){
         exit;
     }catch(PDOException $e){
         echo json_encode(['status'=>'erro','mensagem'=>'Erro ao buscar usuarios'.$e]);
+        exit;
+    }
+}
+
+if($_SERVER['REQUEST_METHOD']=='POST'){
+    header('Content-Type: application/json');
+    $dados = json_decode(file_get_contents('php://input'),true);
+
+    $action = $dados['action'] ?? '';
+    $id_conta = trim($dados['id_conta'] ?? '');
+    $nome = trim($dados['nome'] ?? '');
+    $email = trim($dados['email'] ?? '');
+    $tipo = trim($dados['tipo'] ?? '');
+    $data_criacao = trim($dados['data_criacao'] ?? '');
+
+    if($action == 'excluir'){
+        if(!empty($id_conta)){
+            $sql = 'DELETE FROM conta WHERE id_conta = :id_conta';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':id_conta'=>$id_conta]);
+            echo json_encode(['status'=>'sucesso','mensagem'=>'Usuario excluido com sucesso']);
+            exit;
+        }else{
+            echo json_encode(['status'=>'erro','mensagem'=>'Não foi possivel encontrar o usuario para exclusão']);
+            exit;
+        }
+    }else if($action == 'editar'){
+            //fazer algo
+    }else{
+        echo json_encode(['status'=>'erro','mensagem'=>'Erro ao executar ação']);
         exit;
     }
 }
